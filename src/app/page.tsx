@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
+// Función para calcular el día del año (1–365)
 function getDayOfYear(date: Date): number {
   const start = new Date(date.getFullYear(), 0, 0);
   const diff =
@@ -12,23 +13,22 @@ function getDayOfYear(date: Date): number {
   return Math.floor(diff / oneDay);
 }
 
-export const dynamic = "force-dynamic"; // evita cachear; muestra el 
-versículo del día
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const supabase = await createClient();
 
   const today = new Date();
-  const dayOfYear = getDayOfYear(today); // 1..365
+  const dayOfYear = getDayOfYear(today); // número de día del año
 
-  // 1) Intenta leer desde la BD
+  // Buscar el versículo correspondiente en Supabase
   const { data: verse } = await supabase
     .from("versiculos")
     .select("reference, text")
     .eq("day_number", dayOfYear)
     .maybeSingle();
 
-  // 2) Fallback si no hay registro para hoy
+  // Fallback si no existe registro en la tabla
   const fallback = {
     reference: "Juan 14:6",
     text: "Yo soy el camino, la verdad y la vida.",
@@ -41,8 +41,13 @@ export default async function HomePage() {
     <main className="min-h-screen flex flex-col items-center 
 justify-center bg-gradient-to-b from-blue-50 to-gray-100 text-center p-6">
       {/* Logo */}
-      <Image src="/logo.png" alt="Casa de Vida" width={100} height={100} 
-className="mb-6" />
+      <Image
+        src="/logo.png"
+        alt="Casa de Vida"
+        width={100}
+        height={100}
+        className="mb-6"
+      />
 
       {/* Bienvenida */}
       <h1 className="text-3xl md:text-4xl font-bold text-blue-700 mb-4">
@@ -58,7 +63,7 @@ leading-relaxed">“{txt}”</p>
 {ref}</footer>
       </blockquote>
 
-      {/* CTA registro (más pastoral) */}
+      {/* CTA registro */}
       <div className="bg-blue-600 text-white p-6 rounded-xl shadow-lg mb-4 
 max-w-md">
         <p className="mb-3 text-lg font-semibold">
@@ -73,7 +78,7 @@ font-semibold hover:bg-gray-100 transition"
         </Link>
       </div>
 
-      {/* CTA login con toque inspirador */}
+      {/* CTA login */}
       <div className="bg-white border border-gray-300 p-6 rounded-xl 
 shadow-md max-w-md">
         <p className="text-gray-700 mb-3">
