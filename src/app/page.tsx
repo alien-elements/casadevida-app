@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
-// Función para calcular el día del año (1–365)
+// Calcula el día del año (1–365)
 function getDayOfYear(date: Date): number {
   const start = new Date(date.getFullYear(), 0, 0);
   const diff =
@@ -13,22 +13,23 @@ function getDayOfYear(date: Date): number {
   return Math.floor(diff / oneDay);
 }
 
+// Forzar render dinámico (sin cachear)
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const supabase = await createClient();
 
   const today = new Date();
-  const dayOfYear = getDayOfYear(today); // número de día del año
+  const dayOfYear = getDayOfYear(today);
 
-  // Buscar el versículo correspondiente en Supabase
+  // Buscar versículo en Supabase
   const { data: verse } = await supabase
     .from("versiculos")
     .select("reference, text")
     .eq("day_number", dayOfYear)
     .maybeSingle();
 
-  // Fallback si no existe registro en la tabla
+  // Fallback por si no hay registro
   const fallback = {
     reference: "Juan 14:6",
     text: "Yo soy el camino, la verdad y la vida.",
@@ -40,7 +41,6 @@ export default async function HomePage() {
   return (
     <main className="min-h-screen flex flex-col items-center 
 justify-center bg-gradient-to-b from-blue-50 to-gray-100 text-center p-6">
-      {/* Logo */}
       <Image
         src="/logo.png"
         alt="Casa de Vida"
@@ -49,12 +49,10 @@ justify-center bg-gradient-to-b from-blue-50 to-gray-100 text-center p-6">
         className="mb-6"
       />
 
-      {/* Bienvenida */}
       <h1 className="text-3xl md:text-4xl font-bold text-blue-700 mb-4">
         Bienvenido a la Comunidad Casa de Vida 🙏
       </h1>
 
-      {/* Versículo del día */}
       <blockquote className="bg-white shadow-xl rounded-2xl p-6 max-w-lg 
 mb-6 border border-gray-200">
         <p className="text-lg text-gray-800 italic 
@@ -63,7 +61,6 @@ leading-relaxed">“{txt}”</p>
 {ref}</footer>
       </blockquote>
 
-      {/* CTA registro */}
       <div className="bg-blue-600 text-white p-6 rounded-xl shadow-lg mb-4 
 max-w-md">
         <p className="mb-3 text-lg font-semibold">
@@ -78,7 +75,6 @@ font-semibold hover:bg-gray-100 transition"
         </Link>
       </div>
 
-      {/* CTA login */}
       <div className="bg-white border border-gray-300 p-6 rounded-xl 
 shadow-md max-w-md">
         <p className="text-gray-700 mb-3">
